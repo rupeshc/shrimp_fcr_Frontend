@@ -1,0 +1,244 @@
+import React from "react";
+import { Box, Typography, Divider } from "@mui/material";
+import { motion } from "framer-motion";
+
+const SustainabilityImpactPage = () => {
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 60 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.6, -0.05, 0.01, 0.99] } },
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        width: "100vw",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative",
+        overflow: "hidden",
+        background: `radial-gradient(circle at 40% 20%, rgba(0, 105, 92, 0.98), rgba(2, 136, 209, 0.92)), url('https://www.transparenttextures.com/patterns/subtle-waves.png')`,
+        backgroundSize: "cover, 400px",
+        backgroundPosition: "center",
+        backgroundBlendMode: "overlay, normal",
+      }}
+    >
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 2,
+          textAlign: "center",
+          px: { xs: 3, sm: 6, md: 10 },
+          py: { xs: 5, sm: 7, md: 9 },
+          width: "100%",
+          maxWidth: "1300px",
+          borderRadius: "35px",
+          backdropFilter: "blur(15px)",
+          background: "rgba(255, 255, 255, 0.18)",
+          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.2)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: { xs: "20px 0", sm: "30px 0", md: "50px 0" },
+        }}
+      >
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: -100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.8, ease: [0.43, 0.13, 0.23, 0.96], delay: 0.4 }}
+        >
+          <Typography
+            variant="h1"
+            sx={{
+              mb: { xs: 6, sm: 8, md: 10 },
+              color: "#00BCD4",
+              textShadow: "2px 2px 10px rgba(0, 0, 0, 0.5)",
+              fontSize: { xs: "3rem", sm: "4.5rem", md: "6rem" },
+              fontWeight: 900,
+              letterSpacing: "4px",
+              textTransform: "uppercase",
+              fontFamily: "'Montserrat', sans-serif",
+              lineHeight: 1.1,
+            }}
+          >
+            Sustainability Impact
+          </Typography>
+        </motion.div>
+
+        {/* Sustainable Goals Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Sustainable Development Goals We Support
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            Our Shrimp Farming Dashboard aligns with several United Nations Sustainable Development Goals (SDGs), contributing to global sustainability efforts:
+            <ul>
+              <li><strong>SDG 2: Zero Hunger</strong> - Enhancing food security by increasing shrimp production.</li>
+              <li><strong>SDG 9: Industry, Innovation, and Infrastructure</strong> - Leveraging technology for sustainable farming.</li>
+              <li><strong>SDG 12: Responsible Consumption and Production</strong> - Promoting efficient resource use in aquaculture.</li>
+              <li><strong>SDG 14: Life Below Water</strong> - Reducing the environmental impact of shrimp farming on marine ecosystems.</li>
+            </ul>
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* How It’s Matched Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            How Our Project Aligns with These Goals
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            - <strong>SDG 2: Zero Hunger</strong>: By improving shrimp survival rates to 94% and predicting yields (e.g., 165 kg), our dashboard ensures a steady supply of shrimp, a vital protein source, supporting food security in regions reliant on aquaculture, such as Southeast Asia.<br />
+            - <strong>SDG 9: Industry, Innovation, and Infrastructure</strong>: The integration of IoT sensors, a PostgreSQL backend, and a React frontend introduces cutting-edge technology to shrimp farming, enabling real-time monitoring and fostering innovation in agriculture.<br />
+            - <strong>SDG 12: Responsible Consumption and Production</strong>: Our system optimizes feed and water use (e.g., adjusting aerators when oxygen drops to 4 mg/L), reducing waste by an estimated 15% and promoting sustainable production practices.<br />
+            - <strong>SDG 14: Life Below Water</strong>: Real-time water quality monitoring prevents marine pollution by minimizing organic waste and chemical runoff, protecting coastal ecosystems like mangroves and reducing the environmental footprint of commercial shrimp farming.
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* Need for This Solution Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            The Need for Sustainable Shrimp Farming Solutions
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            Shrimp farming faces significant challenges, including high mortality rates (up to 40% in some regions), inefficient resource use, and environmental degradation. Traditional methods lack real-time data, leading to delayed responses to issues like low oxygen levels or poor water quality, which cause substantial losses. Additionally, unsustainable practices contribute to marine pollution and habitat destruction, such as mangrove deforestation. Our dashboard addresses these issues by providing real-time alerts, predictive analytics, and data-driven insights, ensuring healthier shrimp, reduced waste, and environmentally responsible farming practices.
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* Current Condition Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Current Condition of Shrimp Farming
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            Shrimp farming accounts for 55% of global shrimp production, with an annual output of over 5 million tons, valued at $40 billion. However, it often leads to severe environmental issues, including the destruction of 38% of the world’s mangroves over the past few decades, water pollution from organic waste (e.g., 1 ton of shrimp produces 0.5 tons of waste), and overuse of chemicals like antibiotics, which harm marine biodiversity. Small-scale farmers, particularly in Southeast Asia and Latin America, face high mortality rates (30-40%) due to inadequate monitoring, resulting in annual losses of up to $1 billion globally. These unsustainable practices threaten both the environment and the livelihoods of millions of farmers.
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* Impact Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Impact of Our Project on Sustainability
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            The Shrimp Farming Dashboard delivers measurable sustainability impacts:
+            <ul>
+              <li><strong>Environmental Protection</strong>: Reduces organic waste by 15% through optimized feeding, preventing pond pollution and protecting marine ecosystems like coral reefs and mangroves.</li>
+              <li><strong>Resource Efficiency</strong>: Cuts water and feed usage by 10-15% by ensuring precise application based on real-time data, such as oxygen levels (e.g., maintaining 6 mg/L).</li>
+              <li><strong>Economic Benefits</strong>: Increases yields by 20% (e.g., from 130 kg to 165 kg per cycle) and reduces mortality by 30%, boosting small-scale farmers’ income by an estimated $500 per hectare annually.</li>
+              <li><strong>Food Security</strong>: Enhances shrimp production, contributing to global protein supply and supporting food security for communities in developing regions.</li>
+              <li><strong>Climate Resilience</strong>: Promotes sustainable practices that reduce the need for new pond construction, preserving natural habitats and mitigating climate impacts.</li>
+            </ul>
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* Our Project Needs Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Future Needs to Enhance Sustainability
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            To further our sustainability goals, our project requires:
+            <ul>
+              <li><strong>Funding</strong>: To deploy more IoT sensors across farms, estimated at $10,000 for 50 additional units, enabling broader adoption.</li>
+              <li><strong>Partnerships</strong>: Collaboration with local aquaculture communities and NGOs to integrate sustainable practices, such as mangrove restoration programs.</li>
+              <li><strong>Technology Integration</strong>: Adding weather API integration for environmental predictions and machine learning expertise to improve our predictive models for shrimp health and yield.</li>
+              <li><strong>Training Programs</strong>: Support to train farmers in using the dashboard, ensuring effective adoption and maximizing sustainability benefits.</li>
+              <li><strong>Policy Advocacy</strong>: Working with governments to promote regulations that incentivize sustainable shrimp farming practices, such as reduced chemical use.</li>
+            </ul>
+          </Typography>
+        </motion.div>
+
+        <Divider sx={{ my: 4, background: "linear-gradient(90deg, #B2EBF2, #80DEEA)", height: "4px", borderRadius: "3px" }} />
+
+        {/* Future Sustainability Vision Section */}
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible">
+          <Typography
+            variant="h4"
+            sx={{
+              mb: 4,
+              color: "#B2EBF2",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            Our Vision for Sustainable Aquaculture
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#E0F7FA", mb: 4, fontSize: { xs: "1rem", md: "1.2rem" } }}>
+            We envision a future where shrimp farming is fully sustainable, balancing commercial productivity with environmental stewardship. Our goal is to expand the Shrimp Farming Dashboard to 1,000 farms by 2030, reducing global aquaculture waste by 25%, restoring 10,000 hectares of mangroves through partnerships, and supporting 500,000 small-scale farmers with increased incomes and sustainable practices. By scaling our technology, we aim to set a new standard for aquaculture, ensuring healthy marine ecosystems, resilient food systems, and thriving farming communities worldwide.
+          </Typography>
+        </motion.div>
+      </Box>
+    </Box>
+  );
+};
+
+export default SustainabilityImpactPage;
