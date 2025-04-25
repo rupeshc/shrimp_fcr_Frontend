@@ -9,20 +9,56 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  Button,
+  Paper,
+  MenuItem,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import SendIcon from "@mui/icons-material/Send";
-import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const ChatbotSidebar = ({ open, onClose, currentPage }) => {
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello! I'm ShrimpBot, your AI assistant for the Shrimp FCR Prediction Dashboard. I can help you understand graphs, fetch real-time data, or answer questions about the project. What would you like to know?" },
+    {
+      sender: "bot",
+      text: "Hello! I'm ShrimpBot, your AI assistant for the Shrimp FCR Prediction Dashboard. Start typing or click 'View All Questions' to explore!",
+    },
   ]);
   const [input, setInput] = useState("");
+  const [questions, setQuestions] = useState({}); // Store categorized questions
+  const [showQuestions, setShowQuestions] = useState(false); // Toggle question list visibility
+  const [suggestions, setSuggestions] = useState([]); // Store autocomplete suggestions
+  const [expanded, setExpanded] = useState(false); // Toggle sidebar width
+  const [width, setWidth] = useState(350); // Default width
   const messagesEndRef = useRef(null);
+  const dragRef = useRef(null);
 
-  // Scroll to the bottom of the chat when new messages are added
+  // Fetch questions from the backend when the component mounts
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/chatbot/questions");
+        if (!response.ok) {
+          throw new Error("Failed to fetch questions");
+        }
+        const data = await response.json();
+        setQuestions(data);
+        const allQuestions = Object.values(data).flat();
+        setSuggestions(allQuestions);
+      } catch (err) {
+        console.error("Error fetching questions:", err);
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: "Sorry, I couldn't fetch the list of questions. Please try again later." },
+        ]);
+      }
+    };
+    fetchQuestions();
+  }, []);
+
+  // Scroll to the bottom of the chat whenever messages update
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -31,26 +67,36 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Handle sending a message
+  // Update suggestions as the user types
+  useEffect(() => {
+    if (input.trim()) {
+      const filtered = Object.values(questions)
+        .flat()
+        .filter((q) => q.toLowerCase().includes(input.toLowerCase()))
+        .slice(0, 5); // Limit to top 5 suggestions
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  }, [input, questions]);
+
+  // Handle sending a message to the chatbot
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user's message to the chat
     const userMessage = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setSuggestions([]); // Clear suggestions after sending
 
     try {
-      // Send the message to the backend, including the current page
       const response = await fetch("http://127.0.0.1:5000/api/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, currentPage: currentPage }),
+        body: JSON.stringify({ message: input, currentPage }),
       });
-
       const result = await response.json();
       if (response.ok) {
-        // Add bot's response to the chat
         const botMessage = { sender: "bot", text: result.response };
         setMessages((prev) => [...prev, botMessage]);
       } else {
@@ -64,12 +110,70 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
     }
   };
 
-  // Handle Enter key press
+  // Handle Enter key press to send a message
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
     }
   };
+
+  // Handle user selecting a suggestion
+  const handleSuggestionSelect = (question) => {
+    setInput(question);
+    setSuggestions([]);
+    handleSendMessage();
+  };
+
+  // Handle clicking the "View All Questions" button
+  const handleViewQuestions = () => {
+    setShowQuestions(true);
+    const botMessage = { sender: "bot", text: "Here are the questions I can answer:" };
+    setMessages((prev) => [...prev, botMessage]);
+    setSuggestions([]);
+  };
+
+  // Toggle sidebar width
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+    setWidth(expanded ? 350 : 500); // Toggle between default (350px) and expanded (500px)
+  };
+
+  // Handle resizing by dragging
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (dragRef.current) {
+        const newWidth = window.innerWidth - e.clientX;
+        if (newWidth >= 300 && newWidth <= 600) {
+          setWidth(newWidth);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      dragRef.current = null;
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseDown = () => {
+      dragRef.current = true;
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const resizeBar = document.getElementById("resize-bar");
+    if (resizeBar) {
+      resizeBar.addEventListener("mousedown", handleMouseDown);
+    }
+
+    return () => {
+      if (resizeBar) {
+        resizeBar.removeEventListener("mousedown", handleMouseDown);
+      }
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
 
   return (
     <Drawer
@@ -78,14 +182,29 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
       onClose={onClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: { xs: "80%", sm: 350 },
+          width: { xs: "80%", sm: width },
           background: "linear-gradient(to bottom, rgba(0, 51, 102, 0.9), rgba(0, 128, 128, 0.9))",
           color: "#E0F7FA",
           borderLeft: "1px solid rgba(0, 191, 255, 0.5)",
           boxShadow: "0 0 20px rgba(0, 191, 255, 0.3)",
+          position: "relative",
         },
       }}
     >
+      {/* Resize bar */}
+      <Box
+        id="resize-bar"
+        sx={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 5,
+          backgroundColor: "rgba(0, 191, 255, 0.5)",
+          cursor: "ew-resize",
+          "&:hover": { backgroundColor: "#00BFFF" },
+        }}
+      />
       <Box
         sx={{
           display: "flex",
@@ -96,9 +215,14 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
         }}
       >
         <Typography variant="h6">ShrimpBot</Typography>
-        <IconButton onClick={onClose} sx={{ color: "#E0F7FA" }}>
-          <CloseIcon />
-        </IconButton>
+        <Box>
+          <IconButton onClick={toggleExpand} sx={{ color: "#E0F7FA", mr: 1 }}>
+            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+          <IconButton onClick={onClose} sx={{ color: "#E0F7FA" }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
       </Box>
       <Divider sx={{ backgroundColor: "rgba(0, 191, 255, 0.5)" }} />
       <Box
@@ -107,6 +231,7 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
           overflowY: "auto",
           p: 2,
           background: "rgba(0, 0, 0, 0.2)",
+          maxHeight: "calc(100vh - 150px)", // Adjusted for input and header
         }}
       >
         <List>
@@ -129,18 +254,64 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
                       msg.sender === "user" ? "#0288D1" : "#4CAF50",
                     borderRadius: 2,
                     p: 1,
-                    maxWidth: "80%",
+                    maxWidth: "90%", // Increased to ensure text fits
                     color: "#E0F7FA",
+                    wordBreak: "break-word", // Prevent text overflow
                   }}
                 />
               </motion.div>
             </ListItem>
           ))}
+          {showQuestions && (
+            <Box
+              sx={{
+                p: 1,
+                backgroundColor: "rgba(0, 51, 102, 0.7)",
+                borderRadius: 2,
+                maxHeight: 300,
+                overflowY: "auto", // Scrollable question list
+              }}
+            >
+              {Object.entries(questions).map(([category, questionsList]) => (
+                <Box key={category} sx={{ mb: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: "#00BFFF", fontWeight: "bold", mb: 1, pl: 1 }}
+                  >
+                    {category}
+                  </Typography>
+                  {questionsList.map((question, idx) => (
+                    <ListItem
+                      key={idx}
+                      button
+                      onClick={() => {
+                        setInput(question);
+                        handleSendMessage();
+                        setShowQuestions(false);
+                      }}
+                      sx={{
+                        p: 1,
+                        "&:hover": { backgroundColor: "rgba(0, 191, 255, 0.2)" },
+                      }}
+                    >
+                      <ListItemText
+                        primary={question}
+                        sx={{
+                          color: "#E0F7FA",
+                          wordBreak: "break-word", // Ensure long questions wrap
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </Box>
+              ))}
+            </Box>
+          )}
           <div ref={messagesEndRef} />
         </List>
       </Box>
-      <Box sx={{ p: 2, backgroundColor: "rgba(0, 51, 102, 0.8)" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box sx={{ p: 2, backgroundColor: "rgba(0, 51, 102, 0.8)", position: "relative" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
           <TextField
             fullWidth
             value={input}
@@ -166,7 +337,48 @@ const ChatbotSidebar = ({ open, onClose, currentPage }) => {
           >
             <SendIcon />
           </IconButton>
+          <Button
+            variant="contained"
+            onClick={handleViewQuestions}
+            sx={{
+              backgroundColor: "#4CAF50",
+              color: "#E0F7FA",
+              "&:hover": { backgroundColor: "#45a049" },
+              whiteSpace: "nowrap",
+            }}
+          >
+            View All Questions
+          </Button>
         </Box>
+        {suggestions.length > 0 && input.trim() && (
+          <Paper
+            sx={{
+              position: "absolute",
+              bottom: 70,
+              left: 20,
+              right: 20,
+              maxHeight: 150,
+              overflowY: "auto",
+              backgroundColor: "#2A4066",
+              borderRadius: 2,
+              zIndex: 1000,
+            }}
+          >
+            {suggestions.map((suggestion, index) => (
+              <MenuItem
+                key={index}
+                onClick={() => handleSuggestionSelect(suggestion)}
+                sx={{
+                  color: "#E0F7FA",
+                  "&:hover": { backgroundColor: "rgba(0, 191, 255, 0.2)" },
+                  wordBreak: "break-word",
+                }}
+              >
+                {suggestion}
+              </MenuItem>
+            ))}
+          </Paper>
+        )}
       </Box>
     </Drawer>
   );
